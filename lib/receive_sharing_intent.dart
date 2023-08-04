@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/services.dart';
 
+/// update by tatv
 class ReceiveSharingIntent {
   static const MethodChannel _mChannel =
   const MethodChannel('receive_sharing_intent/messages');
