@@ -121,7 +121,49 @@ public class SwiftReceiveSharingIntentPlugin: NSObject, FlutterPlugin, FlutterSt
     
     private func handleUrl(url: URL?, setInitialData: Bool) -> Bool {
         if let url = url {
-            if url.fragment == "text" {
+            let appDomain = Bundle.main.bundleIdentifier!
+            let appGroupId = (Bundle.main.object(forInfoDictionaryKey: "AppGroupId") as? String) ?? "group.\\(Bundle.main.bundleIdentifier!)"
+            let userDefaults = UserDefaults(suiteName: appGroupId)
+            if url.fragment == "media" {
+                if let key = url.host?.components(separatedBy: "=").last,
+                    let json = userDefaults?.object(forKey: key) as? Data {
+                    let sharedArray = decode(data: json)
+                    let sharedMediaFiles: [SharedMediaFile] = sharedArray.compactMap {
+                        guard let path = getAbsolutePath(for: $0.path) else {
+                            return nil
+                        }
+                        if ($0.type == .video && $0.thumbnail != nil) {
+                            let thumbnail = getAbsolutePath(for: $0.thumbnail!)
+                            return SharedMediaFile.init(path: path, thumbnail: thumbnail, duration: $0.duration, type: $0.type)
+                        } else if ($0.type == .video && $0.thumbnail == nil) {
+                            return SharedMediaFile.init(path: path, thumbnail: nil, duration: $0.duration, type: $0.type)
+                        }
+
+                        return SharedMediaFile.init(path: path, thumbnail: nil, duration: $0.duration, type: $0.type)
+                    }
+                    latestMedia = sharedMediaFiles
+                    if(setInitialData) {
+                        initialMedia = latestMedia
+                    }
+                    eventSinkMedia?(toJson(data: latestMedia))
+                }
+            } else if url.fragment == "file" {
+                if let key = url.host?.components(separatedBy: "=").last,
+                    let json = userDefaults?.object(forKey: key) as? Data {
+                    let sharedArray = decode(data: json)
+                    let sharedMediaFiles: [SharedMediaFile] = sharedArray.compactMap{
+                        guard let path = getAbsolutePath(for: $0.path) else {
+                            return nil
+                        }
+                        return SharedMediaFile.init(path: $0.path, thumbnail: nil, duration: nil, type: $0.type)
+                    }
+                    latestMedia = sharedMediaFiles
+                    if(setInitialData) {
+                        initialMedia = latestMedia
+                    }
+                    eventSinkMedia?(toJson(data: latestMedia))
+                }
+            } else if url.fragment == "text" {
                 if let key = url.host?.components(separatedBy: "=").last,
                     let sharedArray = userDefaults?.object(forKey: key) as? [String] {
                     latestText =  sharedArray.joined(separator: ",")
