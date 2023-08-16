@@ -1,6 +1,5 @@
 import Flutter
 import UIKit
-import FBSDKCoreKit
 import Photos
 
 public class SwiftReceiveSharingIntentPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
