@@ -1,4 +1,4 @@
-group 'com.kasem.receive_sharing_intent'
+group 'com.tatv.receive_sharing_intent'
 version '1.0-SNAPSHOT'
 
 buildscript {

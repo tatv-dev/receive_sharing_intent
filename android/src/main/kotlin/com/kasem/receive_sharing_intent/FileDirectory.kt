@@ -1,4 +1,4 @@
-package com.kasem.receive_sharing_intent
+package com.tatv.receive_sharing_intent
 
 import android.content.ContentUris
 import android.content.Context
