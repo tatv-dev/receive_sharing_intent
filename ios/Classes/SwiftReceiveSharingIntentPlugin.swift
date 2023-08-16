@@ -63,6 +63,19 @@ public class SwiftReceiveSharingIntentPlugin: NSObject, FlutterPlugin, FlutterSt
         // return false
         return true
     }
+
+
+    //ios 13
+    func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
+        guard let url = URLContexts.first?.url else {
+            return
+        }
+        let _ = ApplicationDelegate.shared.application(
+            UIApplication.shared,
+            open: url,
+            sourceApplication: nil,
+            annotation: [UIApplication.OpenURLOptionsKey.annotation])
+    }
     
     // This is the function called on app startup with a shared link if the app had been closed already.
     // It is called as the launch process is finishing and the app is almost ready to run.
@@ -164,11 +177,14 @@ public class SwiftReceiveSharingIntentPlugin: NSObject, FlutterPlugin, FlutterSt
                     eventSinkMedia?(toJson(data: latestMedia))
                 }
             } else if url.fragment == "text" {
-                latestText =  "https://goo.gl/maps/5FxS3DDwm29HCLQP8"
-                if(setInitialData) {
-                    initialText = latestText
+                if let key = url.host?.components(separatedBy: "=").last,
+                    let sharedArray = userDefaults?.object(forKey: key) as? [String] {
+                    latestText =  sharedArray.joined(separator: ",")
+                    if(setInitialData) {
+                        initialText = latestText
+                    }
+                    eventSinkText?(latestText)
                 }
-                eventSinkText?(latestText)
             } else {
                 latestText = url.absoluteString
                 if(setInitialData) {
