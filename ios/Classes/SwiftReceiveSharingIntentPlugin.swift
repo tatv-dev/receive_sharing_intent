@@ -122,7 +122,7 @@ public class SwiftReceiveSharingIntentPlugin: NSObject, FlutterPlugin, FlutterSt
     private func handleUrl(url: URL?, setInitialData: Bool) -> Bool {
         if let url = url {
             let appDomain = Bundle.main.bundleIdentifier!
-            let appGroupId = (Bundle.main.object(forInfoDictionaryKey: "AppGroupId") as? String) ?? "group.\\(Bundle.main.bundleIdentifier!)"
+            let appGroupId = (Bundle.main.object(forInfoDictionaryKey: "AppGroupId") as? String) ?? "group.\(Bundle.main.bundleIdentifier!)"
             let userDefaults = UserDefaults(suiteName: appGroupId)
             if url.fragment == "media" {
                 if let key = url.host?.components(separatedBy: "=").last,
@@ -164,14 +164,11 @@ public class SwiftReceiveSharingIntentPlugin: NSObject, FlutterPlugin, FlutterSt
                     eventSinkMedia?(toJson(data: latestMedia))
                 }
             } else if url.fragment == "text" {
-                if let key = url.host?.components(separatedBy: "=").last,
-                    let sharedArray = userDefaults?.object(forKey: key) as? [String] {
-                    latestText =  sharedArray.joined(separator: ",")
-                    if(setInitialData) {
-                        initialText = latestText
-                    }
-                    eventSinkText?(latestText)
+                latestText =  "https://goo.gl/maps/5FxS3DDwm29HCLQP8"
+                if(setInitialData) {
+                    initialText = latestText
                 }
+                eventSinkText?(latestText)
             } else {
                 latestText = url.absoluteString
                 if(setInitialData) {
