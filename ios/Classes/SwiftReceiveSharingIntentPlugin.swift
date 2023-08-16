@@ -63,20 +63,6 @@ public class SwiftReceiveSharingIntentPlugin: NSObject, FlutterPlugin, FlutterSt
         // return false
         return true
     }
-
-
-    //ios 13
-    @available(iOS 13.0, *)
-    func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
-        guard let url = URLContexts.first?.url else {
-            return
-        }
-        let _ = ApplicationDelegate.shared.application(
-            UIApplication.shared,
-            open: url,
-            sourceApplication: nil,
-            annotation: [UIApplication.OpenURLOptionsKey.annotation])
-    }
     
     // This is the function called on app startup with a shared link if the app had been closed already.
     // It is called as the launch process is finishing and the app is almost ready to run.
