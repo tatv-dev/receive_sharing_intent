@@ -2,14 +2,17 @@ group 'com.tatv.receive_sharing_intent'
 version '1.0-SNAPSHOT'
 
 buildscript {
-    ext.kotlin_version = '1.5.20'
+    // ✅ THAY ĐỔI: Kotlin version tương thích với AGP 8.6+
+    ext.kotlin_version = '1.9.24'  // 1.5.20 → 1.9.24
+
     repositories {
         google()
-        jcenter()
+        mavenCentral()  // ✅ THAY ĐỔI: jcenter() → mavenCentral() (deprecated)
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.1.2'
+        // ✅ THAY ĐỔI: AGP 4.1.2 → 8.6.0 (minimum cho SDK 35)
+        classpath 'com.android.tools.build:gradle:8.6.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
@@ -17,7 +20,7 @@ buildscript {
 rootProject.allprojects {
     repositories {
         google()
-        jcenter()
+        mavenCentral()  // ✅ THAY ĐỔI: jcenter() → mavenCentral()
     }
 }
 
@@ -25,22 +28,48 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
+    // ✅ GIỮ NGUYÊN: Namespace đã có sẵn
     namespace "com.tatv.receive_sharing_intent"
-    compileSdkVersion 30
+
+    // ✅ THAY ĐỔI: compileSdkVersion 30 → 35
+    compileSdkVersion 35
 
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
     }
+
     defaultConfig {
-        minSdkVersion 16
+        // ✅ THAY ĐỔI: minSdkVersion 16 → 24 (recommended for modern sharing)
+        minSdkVersion 24  // 16 → 24 for better sharing intent support
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
-    lintOptions {
+
+    // ✅ THAY ĐỔI: lintOptions → lint
+    lint {
         disable 'InvalidPackage'
+    }
+
+    // ✅ THÊM: Compile options cho JDK 17 (required for AGP 8.6+)
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    // ✅ THÊM: Kotlin options cho JDK 17
+    kotlinOptions {
+        jvmTarget = '17'
     }
 }
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
+    // ✅ THÊM: Modern dependencies cho sharing intent
+    implementation 'androidx.core:core-ktx:1.13.1'
+    implementation 'androidx.appcompat:appcompat:1.7.0'
+    implementation 'androidx.activity:activity-ktx:1.9.2'
+    implementation 'androidx.fragment:fragment-ktx:1.8.3'
+
+    // ✅ THÊM: For handling different content types
+    implementation 'androidx.documentfile:documentfile:1.0.1'
 }
